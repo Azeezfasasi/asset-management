@@ -3,9 +3,18 @@
 import Image from "next/image";
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useUser } from './components/context-api/UserContext';
+import { useUser } from "@/components/context-api/UserContext";
+import { Suspense } from 'react';
 
 export default function Login() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginComponent />
+    </Suspense>
+  );
+}
+
+function LoginComponent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
