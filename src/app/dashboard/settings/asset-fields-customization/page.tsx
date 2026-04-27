@@ -4,7 +4,14 @@ import { useEffect, useState } from 'react';
 import PageHeader from '@/components/ui/PageHeader';
 import { TableSkeleton } from '@/components/ui/LoadingSkeleton';
 
-interface Field { _id: string; name: string; label: string; type: string; required: boolean; isActive: boolean; order: number; }
+interface Field {
+  _id: string;
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  isActive: boolean;
+}
 
 export default function AssetFieldsPage() {
   const [fields, setFields] = useState<Field[]>([]);

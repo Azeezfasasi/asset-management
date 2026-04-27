@@ -1,18 +1,29 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-type DeviceStatus = 'Active' | 'Inactive' | 'Lost' | 'Stolen' | 'Retired';
+type DeviceStatus = 'In Store' | 'Active' | 'In-Repair' | 'Transferred' | 'Lost' | 'Damaged' | 'Archived';
 type ComplianceStatus = 'Compliant' | 'Non-Compliant' | 'Unknown';
 type DeviceOS = 'Android' | 'iOS' | 'Windows' | 'macOS' | 'Linux';
 
+interface IAssignmentRecord {
+  assignedTo: mongoose.Types.ObjectId;
+  assignedBy?: mongoose.Types.ObjectId;
+  assignedAt: Date;
+  unassignedAt?: Date;
+  notes?: string;
+}
+
 interface IDevice extends Document {
+  assetTag: string;
   imei: string;
   deviceName: string;
-  modelName: string; // renamed from 'model' to avoid conflict with Document methods
+  modelName: string;
   manufacturer: string;
   os: DeviceOS;
   osVersion: string;
   status: DeviceStatus;
+  category: mongoose.Types.ObjectId;
   assignedTo?: mongoose.Types.ObjectId;
+  assignmentHistory: IAssignmentRecord[];
   lastSeen?: Date;
   enrolledAt: Date;
   complianceStatus: ComplianceStatus;
@@ -24,11 +35,29 @@ interface IDevice extends Document {
   batteryLevel?: number;
   storageUsed?: number;
   storageTotal?: number;
+  customFields?: Record<string, unknown>;
+  createdBy?: mongoose.Types.ObjectId;
+  updatedBy?: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
+const AssignmentRecordSchema = new Schema<IAssignmentRecord>({
+  assignedTo: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  assignedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  assignedAt: { type: Date, default: Date.now },
+  unassignedAt: { type: Date },
+  notes: { type: String, trim: true },
+}, { _id: true });
+
 const DeviceSchema: Schema = new Schema({
+  assetTag: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    index: true,
+  },
   imei: {
     type: String,
     required: true,
@@ -61,12 +90,21 @@ const DeviceSchema: Schema = new Schema({
   },
   status: {
     type: String,
-    enum: ['Active', 'Inactive', 'Lost', 'Stolen', 'Retired'],
-    default: 'Active',
+    enum: ['In Store', 'Active', 'In-Repair', 'Transferred', 'Lost', 'Damaged', 'Archived'],
+    default: 'In Store',
+  },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'AssetCategory',
+    required: true,
   },
   assignedTo: {
     type: Schema.Types.ObjectId,
     ref: 'User',
+  },
+  assignmentHistory: {
+    type: [AssignmentRecordSchema],
+    default: [],
   },
   lastSeen: {
     type: Date,
@@ -91,13 +129,31 @@ const DeviceSchema: Schema = new Schema({
     max: 100,
   },
   storageUsed: {
-    type: Number, // in MB
+    type: Number,
   },
   storageTotal: {
-    type: Number, // in MB
+    type: Number,
+  },
+  customFields: {
+    type: Schema.Types.Mixed,
+    default: {},
+  },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  updatedBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
   },
 }, {
   timestamps: true,
 });
 
+// Index for faster queries
+DeviceSchema.index({ status: 1 });
+DeviceSchema.index({ category: 1 });
+DeviceSchema.index({ assignedTo: 1 });
+
 export default mongoose.models.Device || mongoose.model<IDevice>('Device', DeviceSchema);
+

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import PageHeader from '@/components/ui/PageHeader';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import { TableSkeleton } from '@/components/ui/LoadingSkeleton';

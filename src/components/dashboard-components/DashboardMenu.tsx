@@ -75,19 +75,34 @@ const navigationGroups: NavGroup[] = [
             description: 'Add a new managed endpoint',
           },
           {
-            href: '/dashboard/devices/archived',
-            label: 'Achived',
-            description: 'Add a new managed endpoint',
+            href: '/dashboard/devices/in-store',
+            label: 'In Store',
+            description: 'Assets in inventory that have not yet been assigned',
           },
           {
             href: '/dashboard/devices/in-repair',
             label: 'In Repair',
-            description: 'Add a new managed endpoint',
+            description: 'Assets currently undergoing maintenance or repair',
           },
           {
-            href: '/dashboard/devices/in-store',
-            label: 'In Store',
-            description: 'Add a new managed endpoint',
+            href: '/dashboard/devices/transferred',
+            label: 'Transferred',
+            description: 'Assets transferred to another location or owner',
+          },
+          {
+            href: '/dashboard/devices/lost',
+            label: 'Lost',
+            description: 'Assets reported as missing or lost',
+          },
+          {
+            href: '/dashboard/devices/damaged',
+            label: 'Damaged',
+            description: 'Assets reported as physically damaged',
+          },
+          {
+            href: '/dashboard/devices/archived',
+            label: 'Archived',
+            description: 'Devices that have been retired or archived',
           },
           {
             href: '/dashboard/devices/add',

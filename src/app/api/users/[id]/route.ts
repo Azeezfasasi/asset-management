@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import User from '@/models/User';
+import bcryptjs from 'bcryptjs';
+import { createAuditLog, createActivityLog } from '@/lib/audit';
+import { verifyToken } from '@/lib/auth';
 
 // GET /api/users/[id] - Get user by ID
 export async function GET(
@@ -37,15 +40,18 @@ export async function PUT(
 ) {
   try {
     await connectToDatabase();
-
+    const authUser = await verifyToken(request);
     const { id } = await params;
-    const { name, email, role, isActive } = await request.json();
+    const { name, email, role, isActive, password } = await request.json();
 
     const updateData: Record<string, unknown> = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email.toLowerCase();
     if (role) updateData.role = role;
     if (typeof isActive === 'boolean') updateData.isActive = isActive;
+    if (password) {
+      updateData.password = await bcryptjs.hash(password, 12);
+    }
 
     const user = await User.findByIdAndUpdate(
       id,
@@ -58,6 +64,28 @@ export async function PUT(
         { error: 'User not found' },
         { status: 404 }
       );
+    }
+
+    // Audit logging
+    if (authUser) {
+      await createAuditLog({
+        action: 'UPDATE_USER',
+        entityType: 'User',
+        entityId: id,
+        performedBy: authUser.id,
+        performerName: authUser.name,
+        performerRole: authUser.role,
+        details: { name: user.name, email: user.email, role: user.role, isActive: user.isActive },
+      });
+      await createActivityLog({
+        user: authUser.id,
+        userName: authUser.name,
+        userRole: authUser.role,
+        action: 'UPDATE_USER',
+        description: `Updated user ${user.name} (${user.email})`,
+        entityType: 'User',
+        entityId: id,
+      });
     }
 
     return NextResponse.json({
@@ -80,8 +108,9 @@ export async function DELETE(
 ) {
   try {
     await connectToDatabase();
-
+    const authUser = await verifyToken(request);
     const { id } = await params;
+
     const user = await User.findByIdAndDelete(id);
 
     if (!user) {
@@ -89,6 +118,28 @@ export async function DELETE(
         { error: 'User not found' },
         { status: 404 }
       );
+    }
+
+    // Audit logging
+    if (authUser) {
+      await createAuditLog({
+        action: 'DELETE_USER',
+        entityType: 'User',
+        entityId: id,
+        performedBy: authUser.id,
+        performerName: authUser.name,
+        performerRole: authUser.role,
+        details: { name: user.name, email: user.email },
+      });
+      await createActivityLog({
+        user: authUser.id,
+        userName: authUser.name,
+        userRole: authUser.role,
+        action: 'DELETE_USER',
+        description: `Deleted user ${user.name} (${user.email})`,
+        entityType: 'User',
+        entityId: id,
+      });
     }
 
     return NextResponse.json({
@@ -102,3 +153,4 @@ export async function DELETE(
     );
   }
 }
+

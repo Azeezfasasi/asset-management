@@ -32,15 +32,15 @@ const statusColors: Record<string, string> = {
   'Archived': 'bg-slate-100 text-slate-800 border-slate-200',
 };
 
-export default function DevicesPage() {
+export default function TransferredPage() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  
+
   useEffect(() => {
     let mounted = true;
-    fetch('/api/devices?status=In Store')
+    fetch('/api/devices?status=Transferred')
       .then((r) => r.json())
       .then((d) => { if (mounted) { setDevices(d.devices || []); setLoading(false); } })
       .catch(() => { if (mounted) setLoading(false); });
@@ -52,40 +52,37 @@ export default function DevicesPage() {
     try {
       const res = await fetch(`/api/devices/${deleteId}`, { method: 'DELETE' });
       if (res.ok) setDevices((p) => p.filter((d) => d._id !== deleteId));
-    } catch (e) { console.error(e); } finally { setDeleteId(null); }
+    } catch { /* ignore */ } finally { setDeleteId(null); }
   };
 
-  const filtered = devices.filter((d) => {
-    const matchesSearch = d.deviceName.toLowerCase().includes(filter.toLowerCase()) ||
-      d.imei.includes(filter) ||
-      d.modelName.toLowerCase().includes(filter.toLowerCase());
-    return matchesSearch;
-  });
+  const filtered = devices.filter((d) =>
+    d.deviceName.toLowerCase().includes(filter.toLowerCase()) ||
+    d.imei.includes(filter) ||
+    d.modelName.toLowerCase().includes(filter.toLowerCase())
+  );
 
-  
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Devices In Store"
-        description="Assets in inventory that have not yet been assigned."
+        title="Transferred Devices"
+        description="Assets that have been transferred to another location or owner."
+        backHref="/dashboard/devices"
         action={{ label: 'Add Device', href: '/dashboard/devices/add' }}
       />
-
       <div className="relative max-w-md">
         <svg className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         <input
           type="text"
-          placeholder="Search devices by name, IMEI, or model..."
+          placeholder="Search devices..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm transition focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400"
         />
       </div>
-
       {loading ? <TableSkeleton /> : filtered.length === 0 ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center">
           <h3 className="text-lg font-semibold text-slate-900">No devices found</h3>
-          <p className="mt-1 text-sm text-slate-500">Add a device to get started.</p>
+          <p className="mt-1 text-sm text-slate-500">Devices with this status will appear here.</p>
         </div>
       ) : (
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -100,7 +97,6 @@ export default function DevicesPage() {
                   <th className="px-4 py-3">Category</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Assigned</th>
-                  <th className="px-4 py-3">Compliance</th>
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
@@ -130,7 +126,6 @@ export default function DevicesPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-slate-600">{d.assignedTo?.name || 'Unassigned'}</td>
-                    <td className="px-4 py-3 text-slate-600">{d.complianceStatus}</td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Link href={`/dashboard/devices/${d._id}`} className="rounded-lg p-1.5 text-slate-500 transition hover:bg-blue-50 hover:text-blue-600" title="View">
@@ -148,8 +143,8 @@ export default function DevicesPage() {
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
+            </div>
+        </div>  
       )}
       <ConfirmModal
         isOpen={!!deleteId}
@@ -163,4 +158,3 @@ export default function DevicesPage() {
     </div>
   );
 }
-

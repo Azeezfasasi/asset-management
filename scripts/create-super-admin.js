@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const readline = require('readline');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/revlock';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://hayzedboy20_db_user:bridge2026@ac-fjxwndh-shard-00-00.mmjdmwe.mongodb.net:27017,ac-fjxwndh-shard-00-01.mmjdmwe.mongodb.net:27017,ac-fjxwndh-shard-00-02.mmjdmwe.mongodb.net:27017/?ssl=true&replicaSet=atlas-y4xkwg-shard-0&authSource=admin&appName=asset-management';
 
 // User Schema
 const UserSchema = new mongoose.Schema({

@@ -1,87 +1,47 @@
-# Backend Integration Implementation Plan
+# Device Management Enhancement - Implementation Tracker
 
-## Phase 1: Database Models & Core APIs
+## Backend Changes
 
 ### Models
-- [ ] src/models/Vendor.ts
-- [ ] src/models/PurchaseOrder.ts
-- [ ] src/models/AssetCategory.ts
-- [ ] src/models/MaintenanceRecord.ts
-- [ ] src/models/AuditLog.ts
-- [ ] src/models/ActivityLog.ts
-- [ ] src/models/AssetField.ts
+- [ ] 1. Update `src/models/Device.ts` - Add assetTag, category, assignmentHistory, customFields, createdBy, updatedBy; update status enum
+- [ ] 2. Create `src/lib/audit.ts` - Helper for audit/activity logging
+- [ ] 3. Create `src/lib/assetTag.ts` - Helper for generating unique asset tags
 
-### APIs
-- [ ] src/app/api/vendors/route.ts (GET/POST)
-- [ ] src/app/api/vendors/[id]/route.ts (GET/PUT/DELETE)
-- [ ] src/app/api/purchase-orders/route.ts (GET/POST)
-- [ ] src/app/api/purchase-orders/[id]/route.ts (GET/PUT/DELETE)
-- [ ] src/app/api/categories/route.ts (GET/POST)
-- [ ] src/app/api/categories/[id]/route.ts (GET/PUT/DELETE)
-- [ ] src/app/api/maintenance/route.ts (GET/POST)
-- [ ] src/app/api/maintenance/[id]/route.ts (GET/PUT/DELETE)
-- [ ] src/app/api/audit-logs/route.ts (GET)
-- [ ] src/app/api/activity-logs/route.ts (GET)
-- [ ] src/app/api/asset-fields/route.ts (GET/POST/PUT/DELETE)
-- [ ] src/app/api/dashboard/stats/route.ts (GET)
-- [ ] Enhance /api/devices with pagination, search, filters
-- [ ] Enhance /api/users with pagination, search
+### API Routes
+- [ ] 4. Update `src/app/api/devices/route.ts` - Asset tag gen, category validation, bulk upload endpoint, audit logging
+- [ ] 5. Create `src/app/api/devices/bulk/route.ts` - Bulk upload endpoint
+- [ ] 6. Update `src/app/api/devices/[id]/route.ts` - Assignment history tracking, audit logging, populate category
+- [ ] 7. Update `src/app/api/users/[id]/route.ts` - Password update support, audit logging
+- [ ] 8. Update `src/app/api/categories/route.ts` - Ensure deviceCount stays accurate
 
-## Phase 2: Reusable Components
-- [ ] src/components/ui/DataTable.tsx
-- [ ] src/components/ui/StatCard.tsx
-- [ ] src/components/ui/PageHeader.tsx
-- [ ] src/components/ui/LoadingSkeleton.tsx
-- [ ] src/components/ui/ConfirmModal.tsx
-- [ ] src/components/ui/ToastProvider.tsx
+## Frontend Changes
 
-## Phase 3: Page Implementations
+### Device Pages
+- [ ] 9. Update `src/app/dashboard/devices/add/page.tsx` - Category dropdown, new status values, asset tag display, custom fields, bulk upload
+- [ ] 10. Create `src/app/dashboard/devices/[id]/edit/page.tsx` - Edit device form
+- [ ] 11. Update `src/app/dashboard/devices/[id]/page.tsx` - Edit button, assignment history, audit history, maintenance records
+- [ ] 12. Update `src/app/dashboard/devices/page.tsx` - Edit links, updated status colors
+- [ ] 13. Update `src/app/dashboard/devices/in-store/page.tsx` - Fix filter to 'In Store'
+- [ ] 14. Update `src/app/dashboard/devices/in-repair/page.tsx` - Fix filter to 'In-Repair'
+- [ ] 15. Update `src/app/dashboard/devices/archived/page.tsx` - Fix filter to 'Archived'
+- [ ] 16. Create `src/app/dashboard/devices/transferred/page.tsx` - Transferred devices page
+- [ ] 17. Create `src/app/dashboard/devices/lost/page.tsx` - Lost devices page
+- [ ] 18. Create `src/app/dashboard/devices/damaged/page.tsx` - Damaged devices page
 
-### Devices Section (8 pages)
-- [ ] src/app/dashboard/devices/page.tsx — Full listing with DataTable
-- [ ] src/app/dashboard/devices/[id]/page.tsx — Detail & edit view
-- [ ] src/app/dashboard/devices/add/page.tsx — Style to glassmorphism theme
-- [ ] src/app/dashboard/devices/archived/page.tsx
-- [ ] src/app/dashboard/devices/in-repair/page.tsx
-- [ ] src/app/dashboard/devices/in-store/page.tsx
-- [ ] src/app/dashboard/devices/categories/page.tsx
-- [ ] src/app/dashboard/devices/analytics/page.tsx
-- [ ] src/app/dashboard/devices/stock-analytics/page.tsx
+### User Pages
+- [ ] 19. Update `src/app/dashboard/users/page.tsx` - Add edit user functionality
 
-### Users Section (2 pages - style update)
-- [ ] src/app/dashboard/users/page.tsx — Glassmorphism theme
-- [ ] src/app/dashboard/users/add/page.tsx — Glassmorphism theme
+### Maintenance Pages
+- [ ] 20. Update `src/app/dashboard/maintenance/page.tsx` - Add create/edit maintenance records UI
 
-### Maintenance Section (2 pages)
-- [ ] src/app/dashboard/maintenance/page.tsx
-- [ ] src/app/dashboard/maintenance/asset-lifecycle/page.tsx
+### Settings Pages
+- [ ] 21. Update `src/app/dashboard/settings/asset-fields-customization/page.tsx` - Improve options editing
 
-### Vendors Section (3 pages)
-- [ ] src/app/dashboard/vendors/page.tsx
-- [ ] src/app/dashboard/vendors/purchase-orders/page.tsx
-- [ ] src/app/dashboard/vendors/asset-sourcing-history/page.tsx
+### Navigation
+- [ ] 22. Update `src/components/dashboard-components/DashboardMenu.tsx` - Add new status filter pages to nav
 
-### Reports (1 page)
-- [ ] src/app/dashboard/reports/page.tsx
-
-### Settings Section (4 pages)
-- [ ] src/app/dashboard/settings/page.tsx
-- [ ] src/app/dashboard/settings/roles-permissions/page.tsx
-- [ ] src/app/dashboard/settings/asset-fields-customization/page.tsx
-- [ ] src/app/dashboard/settings/audit-logs/page.tsx
-
-### Audit & Logs Section (3 pages)
-- [ ] src/app/dashboard/audit-logs/page.tsx
-- [ ] src/app/dashboard/audit-logs/activity-logs/page.tsx
-- [ ] src/app/dashboard/audit-logs/asset-history-tracking/page.tsx
-
-### Dashboard
-- [ ] src/app/dashboard/my-dashboard/page.tsx — Real stats from API
-
-## Phase 4: Polish & Fixes
-- [ ] Seed script for demo data
-- [ ] Middleware updates for new routes
-- [ ] Mobile responsiveness verification
-- [ ] TypeScript build check
-- [ ] DashboardHeader page titles update
+## Testing & Follow-up
+- [ ] 23. Run `npm run build` to verify compilation
+- [ ] 24. Run `npm run lint` to catch style issues
+- [ ] 25. Test all device flows end-to-end
 
