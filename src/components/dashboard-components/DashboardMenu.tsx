@@ -144,8 +144,13 @@ const navigationGroups: NavGroup[] = [
         ),
         children: [
           {
+            href: '/dashboard/users',
+            label: 'All Users',
+            description: 'Create an operator account',
+          },
+          {
             href: '/dashboard/users/add',
-            label: 'Invite User',
+            label: 'Add User',
             description: 'Create an operator account',
           },
         ],
@@ -167,6 +172,11 @@ const navigationGroups: NavGroup[] = [
           </svg>
         ),
         children: [
+          {
+            href: '/dashboard/maintenance',
+            label: 'Mauntenance Schedule',
+            description: 'Track asset from acquisition to retirement',
+          },
           {
             href: '/dashboard/maintenance/asset-lifecycle',
             label: 'Asset Lifecycle',
@@ -243,6 +253,11 @@ const navigationGroups: NavGroup[] = [
         ),
         children: [
           {
+            href: '/dashboard/settings',
+            label: 'Settings',
+            description: 'Define user roles and access levels',
+          },
+          {
             href: '/dashboard/settings/roles-permissions',
             label: 'Roles & permissions',
             description: 'Define user roles and access levels',
@@ -276,6 +291,11 @@ const navigationGroups: NavGroup[] = [
           </svg>
         ),
         children: [
+          {
+            href: '/dashboard/audit-logs',
+            label: 'Audit logs',
+            description: 'View user activity and system events for auditing',
+          },
           {
             href: '/dashboard/audit-logs/activity-logs',
             label: 'Activity logs',
